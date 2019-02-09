@@ -11,7 +11,7 @@ cancer_type <- args[1]
 
 setwd('~/projects/rotation_2019/cancer_subtypes')
 print('Loading data frames...')
-cib_df <- read.csv('../data/cib_data_sid_consolidated.csv')
+cib_df <- read.csv('../data/cib_data_sid_consolidated_clr.csv')
 otu_df <- read.csv('../data/snmData_Cib_filt.csv')
 meta_df <- read.csv('../data/metadata_sid_filt.csv')
 print('Data frames loaded!')
@@ -69,9 +69,12 @@ result <- ExecuteSNF.CC(datasets = cancer_data, clusterNum = 3,
 						title = cancer_type, plot = 'png')
 group <- result$group
 group.df <- data.frame(rbind(cancer_cib_df$feature.id, group))
+write.csv(group.df, paste(cancer_type, 'group.csv', sep='/'), row.names=FALSE)
 print('Finished SNF & CC!')
 
 # ---- PLOT ----
 
 sil=silhouette_SimilarityMatrix(result$group, result$distanceMatrix)
+png(paste(cancer_type, 'silhouette.png', sep='/'))
 plot(sil, border=NA, col=2:4)
+dev.off()
