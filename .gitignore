@@ -2,4 +2,7 @@
 *.pyc
 *.swp
 *.Rhistory
-
+*.o*
+*.e*
+*.png
+*.pdf

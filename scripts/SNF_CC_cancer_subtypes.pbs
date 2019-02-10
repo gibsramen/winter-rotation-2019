@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -V
+#PBS -N SNF_CC
+#PBS -m abe
+#PBS -M grahman@eng.ucsd.edu
+#PBS -l pmem=8gb
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=10
+#PBS -j oe
+
+source /opt/miniconda3/bin/activate CancerSubtypes
+
+Rscript /home/grahman/projects/rotation_2019/cancer_subtypes/SNF_CC_cancer_subtypes.R "THYM"
