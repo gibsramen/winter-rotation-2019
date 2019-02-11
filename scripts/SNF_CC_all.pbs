@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#PBS -V
+#PBS -t 1-25
+#PBS -N SNF_CC_all
+#PBS -m abe
+#PBS -M grahman@eng.ucsd.edu
+#PBS -l pmem=8gb
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=10
+#PBS -j oe
+
+# need to make this an array job
+
+source /opt/miniconda3/bin/activate CancerSubtypes
+script='/home/grahman/projects/rotation_2019/cancer_subtypes/SNF_CC_cancer_subtypes.R'
+cancers='/home/grahman/projects/rotation_2019/data/cancer_counts.txt'
+
+Rscript $script `sed -n "${PBS_ARRAYID}p" $cancers`

@@ -5,6 +5,7 @@ if (length(args) == 0){
 	stop('Please provide cancer type')
 }
 
+# input cancer type by which to cluster
 cancer_type <- args[1]
 
 # ---- LOADING ----
@@ -13,7 +14,6 @@ setwd('~/projects/rotation_2019/cancer_subtypes')
 print('Loading data frames...')
 cib_df <- read.csv('../data/cib_data_sid_consolidated_clr.csv')
 otu_df <- read.csv('../data/snmData_Cib_filt.csv')
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
 print('Data frames loaded!')
 
 # ---- FILTERING ----
@@ -27,33 +27,19 @@ cancer_cib_df <- cancer_cib_df[order(cancer_cib_df$feature.id),]
 cancer_otu_df <- otu_df[otu_df$Unnamed..0 %in% cancer_cib_df$feature.id,]
 cancer_otu_df <- cancer_otu_df[order(cancer_otu_df$Unnamed..0),]
 
-cancer_meta_df <- meta_df[meta_df$X %in% cancer_cib_df$feature.id,]
-cancer_meta_df <- cancer_meta_df[order(cancer_meta_df$X),]
-
-cancer_meta_df <- cancer_meta_df[,colnames(cancer_meta_df) %in% c('X', 'race', 'age_at_diagnosis', 'gender')]
-
-cancer_race_df <- cancer_meta_df[,colnames(cancer_meta_df) %in% c('X', 'race')]
-cancer_race_df <- cancer_race_df[order(cancer_race_df$X),]
-
-cancer_age_df <- cancer_meta_df[,colnames(cancer_meta_df) %in% c('X', 'age_at_diagnosis')]
-cancer_age_df <- cancer_age_df[order(cancer_age_df$X),]
-
-cancer_gender_df <- cancer_meta_df[,colnames(cancer_meta_df) %in% c('X', 'gender')]
-cancer_gender_df <- cancer_gender_df[order(cancer_gender_df$X),]
-
 rownames(cancer_cib_df) <- NULL
 rownames(cancer_otu_df) <- NULL
-rownames(cancer_meta_df) <- NULL
-rownames(cancer_race_df) <- NULL
-rownames(cancer_gender_df) <- NULL
-rownames(cancer_age_df) <- NULL
 print('Finished filtering data frames!')
 
 # ---- TRANSPOSE ----
+# SNF requires rows as features and columns as samples (opposite csv)
+# first row in transposed df is sample
+# in cib_df, second row is cancer type
+# by default transpose seems to coerce to characters
 
 t.cancer_cib_df <- t(cancer_cib_df)
 colnames(t.cancer_cib_df) <- t.cancer_cib_df[1,]
-t.cancer_cib_df <- t.cancer_cib_df[-c(1,2),]
+t.cancer_cib_df <- t.cancer_cib_df[-c(1,2),] 
 class(t.cancer_cib_df) <- 'numeric'
 
 t.cancer_otu_df <- t(cancer_otu_df)
