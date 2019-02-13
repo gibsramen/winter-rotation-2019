@@ -9,8 +9,7 @@
 #PBS -l walltime=24:00:00
 #PBS -l nodes=1:ppn=10
 #PBS -j oe
-
-# need to make this an array job
+#PBS -o out/
 
 source /opt/miniconda3/bin/activate CancerSubtypes
 script='/home/grahman/projects/rotation_2019/cancer_subtypes/SNF_CC_cancer_subtypes.R'

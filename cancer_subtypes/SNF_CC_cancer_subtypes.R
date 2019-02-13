@@ -7,6 +7,7 @@ if (length(args) == 0){
 
 # input cancer type by which to cluster
 cancer_type <- args[1]
+print(cancer_type)
 
 # ---- LOADING ----
 
@@ -51,16 +52,31 @@ print('Finished transposing data frames!')
 # ---- SNF-CC ----
 
 cancer_data <- list(OTU=t.cancer_otu_df, Cib=t.cancer_cib_df)
-result <- ExecuteSNF.CC(datasets = cancer_data, clusterNum = 3, 
-						title = cancer_type, plot = 'png')
-group <- result$group
-group.df <- data.frame(rbind(cancer_cib_df$feature.id, group))
-write.csv(group.df, paste(cancer_type, 'group.csv', sep='/'), row.names=FALSE)
-print('Finished SNF & CC!')
 
-# ---- PLOT ----
+avg_sil_widths = c()
+max_num <- 10
+for (i in c(2:max_num)){
+	print(sprintf('Testing %i clusters...', i))
+	out_dir = paste('cluster_results', cancer_type, 
+					sprintf('%i_clusters', i), sep='/')
+	dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+	result <- ExecuteSNF.CC(datasets = cancer_data, clusterNum = i,
+							title = out_dir, plot = 'png')
+	print('Finished SNF & CC!')
+	group <- result$group
+	group.df <- data.frame(rbind(cancer_cib_df$feature.id, group))
+	write.csv(group.df, paste(out_dir, 'group.csv', sep='/'), row.names=FALSE)
 
-sil=silhouette_SimilarityMatrix(result$group, result$distanceMatrix)
-png(paste(cancer_type, 'silhouette.png', sep='/'))
-plot(sil, border=NA, col=2:4)
-dev.off()
+	sil=silhouette_SimilarityMatrix(result$group, result$distanceMatrix)
+	png(paste(out_dir, 'silhouette.png', sep='/'))
+	plot(sil, border=NA, col=2:(i+1))
+	dev.off()
+
+	avg_sil_widths[i-1] = mean(sil[,3])
+}
+
+#sil_out_file = paste('sil_results', cancer_type, sep = '/')
+sil_out_file = paste('cluster_results', cancer_type, 'silhouette_widths.tsv',  sep='/')
+sil.df <- data.frame(cbind(c(2:max_num), avg_sil_widths))
+colnames(sil.df) <- c('Num_Clusters', 'Avg_Sil_Width')
+write.table(sil.df, sil_out_file, row.names = FALSE, sep='\t')
