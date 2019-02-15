@@ -37,6 +37,8 @@ t.cancer_cib_df <- t(cancer_cib_df)
 colnames(t.cancer_cib_df) <- t.cancer_cib_df[1,]
 t.cancer_cib_df <- t.cancer_cib_df[-c(1,2),] 
 class(t.cancer_cib_df) <- 'numeric'
+t.norm.cancer_cib_df <- data.normalization(t.cancer_cib_df,
+	type="feature_zscore", log2=FALSE)
 
 # ---- SNF-CC ----
 
@@ -47,8 +49,9 @@ for (i in c(2:max_num)){
 	out_dir = paste('cib_only_cluster_results', cancer_type, 
 					sprintf('%i_clusters', i), sep='/')
 	dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
-	result <- ExecuteCC(clusterNum=i, d=t.cancer_cib_df, 
-						title=out_dir, plot='png')
+	# using list of 1 dataset - normalizes to z-score?
+	result <- ExecuteCC(clusterNum = i, d=t.norm.cancer_cib_df,
+		title=out_dir, plot='png')
 	print('Finished SNF & CC!')
 	group <- result$group
 	group.df <- data.frame(rbind(cancer_cib_df$feature.id, group))
