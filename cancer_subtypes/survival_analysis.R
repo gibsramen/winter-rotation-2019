@@ -23,13 +23,13 @@ t.group <- data.frame(t.group)
 
 meta_df <- read.csv('../data/metadata_sid_filt.csv')
 surv_df <- meta_df[,c('X', 'investigation' ,'vital_status_label', 
-					  'days_to_death', 'new_tumor_event_after_initial_trtmt',
-					  'primary_therapy_outcome_success_label')]
+	'days_to_death', 'new_tumor_event_after_initial_trtmt',
+	'primary_therapy_outcome_success_label')]
 surv_df$investigation <- sub("TCGA-", '', surv_df$investigation)
 cancer_surv_df <- surv_df[surv_df$investigation == cancer_type,]
 cancer_surv_df <- cancer_surv_df[,c('X', 'vital_status_label', 'days_to_death')]
 cancer_surv_df$vital_status_label <- ifelse(cancer_surv_df$vital_status_label
-											== 'Dead', 1, 0)
+	== 'Dead', 1, 0)
 t.group_cancer <- t.group[t.group$id %in% cancer_surv_df$X,]
 cancer_surv_df <- cancer_surv_df[order(cancer_surv_df$X),]
 
