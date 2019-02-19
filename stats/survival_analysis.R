@@ -8,18 +8,10 @@ if (length(args) == 0){
 
 # run on input cancer type and input number of clusters
 cancer_type <- args[1]
-num_clust <- args[2]
 
+setwd('/home/grahman/projects/rotation_2019/stats')
 project_dir <- '/home/grahman/projects/rotation_2019/cancer_subtypes'
 cancer_dir <- paste('cluster_results', cancer_type, sep='/')
-clust_string <- sprintf('%s_clusters', num_clust)
-group_file <- paste(project_dir, cancer_dir, clust_string, 'group.csv', sep='/')
-group <- read.csv(group_file, header=F)
-
-t.group <- t(group)
-colnames(t.group) <- c('id', 'index', 'group')
-t.group <- t.group[,c('id', 'group')]
-t.group <- data.frame(t.group)
 
 days_df <- read.table('../clinical/follow_up_counts.txt', sep='\t')
 colnames(days_df) <- c('barcode', 'status', 'days')
@@ -36,6 +28,7 @@ cases <- as.factor(cases)
 barcodes <- c()
 status_vector <- c()
 days_vector <- c()
+
 for (barcode in cases){
 	row <- days_df[days_df$barcode == barcode,]
 	barcodes <- c(barcodes, barcode)
@@ -49,21 +42,40 @@ cancer_surv_df <- surv_df[surv_df$investigation == cancer_type,]
 cancer_surv_df <- cancer_surv_df[order(cancer_surv_df$X),]
 cancer_surv_df <- cancer_surv_df[,c('X', 'status', 'days')]
 cancer_surv_df$status <- ifelse(cancer_surv_df$status == 'Dead', 1, 0)
-print(head(cancer_surv_df))
 
-t.group_cancer <- t.group[t.group$id %in% cancer_surv_df$X,]
-print(head(t.group_cancer))
+for (i in c(2:10)){
+	clust_string <- sprintf('%s_clusters', i)
+	print(clust_string)
+	group_file <- paste(project_dir, cancer_dir, clust_string, 'group.csv', sep='/')
+	group <- read.csv(group_file, header=F)
 
-surv_object <- Surv(time = cancer_surv_df$days,
-					event = cancer_surv_df$status,
-					type = 'right')
-fit1 <- survfit(surv_object ~ group, data=t.group_cancer)
+	t.group <- t(group)
+	colnames(t.group) <- c('id', 'index', 'group')
+	t.group <- t.group[,c('id', 'group')]
+	t.group <- data.frame(t.group)
+	t.group_cancer <- t.group[t.group$id %in% cancer_surv_df$X,]
 
-out_dir <- paste('survival_plots', cancer_type, sep='/')
-dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
-out_file <- paste(out_dir, sprintf('%s_clusters.png', num_clust), sep='/')
-png(out_file)
-p <- ggsurvplot(fit1, data = t.group_cancer, pval = TRUE)
-dev.off()
+	cancer_surv_df_i <- cancer_surv_df
+	cancer_surv_df_i$group <- t.group_cancer$group
+	cancer_surv_df_i <- cancer_surv_df_i[,c('days', 'status', 'group')]
 
+	#surv_object <- Surv(time = cancer_surv_df$days,
+	#					event = cancer_surv_df$status,
+	#					type = 'right')
+	#fit1 <- survfit(surv_object ~ group, data=t.group_cancer)
+	#print(summary(fit1))
+
+	surv_object <- Surv(time = cancer_surv_df_i$days,
+		event=cancer_surv_df_i$status)
+	#fit1 <- survfit(Surv(days, status) ~ group, data = cancer_surv_df)
+	fit1 <- survfit(surv_object ~ group, data=cancer_surv_df_i)
+
+	stats_dir <- '/home/grahman/projects/rotation_2019/stats'
+	out_dir <- paste(stats_dir, 'survival_plots', cancer_type, sep='/')
+	dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+	out_file <- paste(out_dir, sprintf('%s_clusters.png', i), sep='/')
+	#png('bruh.png')
+	survp <- ggsurvplot(fit1, pval = TRUE)
+	ggsave(file=out_file, print(survp), width=4, height=4, units="in")
+}
 
