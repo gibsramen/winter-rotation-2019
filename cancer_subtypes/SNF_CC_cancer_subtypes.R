@@ -7,13 +7,16 @@ if (length(args) == 0){
 
 # input cancer type by which to cluster
 cancer_type <- args[1]
+cib_file <- args[2]
+out_folder <- args[3]
 print(cancer_type)
 
 # ---- LOADING ----
 
 setwd('~/projects/rotation_2019/cancer_subtypes')
 print('Loading data frames...')
-cib_df <- read.csv('../data/cib_data_sid_consolidated_clr.csv')
+#cib_df <- read.csv('../data/cib_data_sid_consolidated_clr.csv')
+cib_df <- read.csv(cib_file)
 otu_df <- read.csv('../data/snmData_Cib_filt.csv')
 print('Data frames loaded!')
 
@@ -57,8 +60,10 @@ avg_sil_widths = c()
 max_num <- 10
 for (i in c(2:max_num)){
 	print(sprintf('Testing %i clusters...', i))
-	out_dir = paste('cluster_results', cancer_type, 
-					sprintf('%i_clusters', i), sep='/')
+	#out_dir = paste('cluster_results', cancer_type, 
+					#sprintf('%i_clusters', i), sep='/')
+	out_dir <- paste(out_folder, cancer_type, sprintf('%i_clusters', i),
+		sep = '/')
 	dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 	result <- ExecuteSNF.CC(datasets = cancer_data, clusterNum = i,
 							title = out_dir, plot = 'png')
@@ -76,7 +81,8 @@ for (i in c(2:max_num)){
 }
 
 #sil_out_file = paste('sil_results', cancer_type, sep = '/')
-sil_out_file = paste('cluster_results', cancer_type, 'silhouette_widths.tsv',  sep='/')
+#sil_out_file = paste('cluster_results', cancer_type, 'silhouette_widths.tsv',  sep='/')
+sil_out_file = paste(out_folder, cancer_type, 'silhouette_widths.tsv', sep='/')
 sil.df <- data.frame(cbind(c(2:max_num), avg_sil_widths))
 colnames(sil.df) <- c('Num_Clusters', 'Avg_Sil_Width')
 write.table(sil.df, sil_out_file, row.names = FALSE, sep='\t')
