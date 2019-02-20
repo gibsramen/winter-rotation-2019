@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#PBS -V
+#PBS -N permanova
+#PBS -m abe
+#PBS -M grahman@eng.ucsd.edu
+#PBS -l pmem=8gb
+#PBS -l walltime=48:00:00
+#PBS -l nodes=2:ppn=10
+#PBS -j oe
+#PBS -o out/
+
+source /opt/miniconda3/bin/activate qiime2-2019.1
+
+bray_curtis_dist='/home/grahman/data/TCGA_immune_microbiome/qiime/bray_curtis_dist.qza'
+metadata_file='/home/grahman/data/TCGA_immune_microbiome/qiime/metadata_sid_filt.tsv'
+panfs='/panfs/panfs1.ucsd.edu/panscratch/grahman'
+transpose_script='/home/grahman/projects/rotation_2019/scripts/transpose_group.py'
+tmp_tsv="${panfs}/tmp.tsv"
+
+# transpose group_file
+python $transpose_script $GROUP_FILE $tmp_tsv
+echo "Group file transposed!"
+
+# create filtered bray curtis distance matrix
+tmp_dist_matrix="${panfs}/tmp_dist_matrix.qza"
+
+qiime diversity filter-distance-matrix --i-distance-matrix $bray_curtis_dist --m-metadata-file $tmp_tsv --o-filtered-distance-matrix $tmp_dist_matrix 
+echo "Diversity matrix filtered!"
+
+# run permanova
+out_viz="/home/grahman/projects/rotation_2019/qiime/out_viz.qzv"
+
+qiime diversity beta-group-significance --i-distance-matrix $tmp_dist_matrix --m-metadata-file $tmp_tsv --m-metadata-column group --o-visualization $out_viz --p-pairwise
+echo "Permanova performed!"
