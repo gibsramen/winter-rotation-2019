@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #PBS -V
-#PBS -t 1-2
+#PBS -t 1-25
 #PBS -N SNF_CC_all
 #PBS -m abe
 #PBS -M grahman@eng.ucsd.edu
