@@ -7,6 +7,7 @@ if (length(args) == 0){
 }
 
 # run on input cancer type and input number of clusters
+# TODO: take arg cluster directory
 cancer_type <- args[1]
 
 setwd('/home/grahman/projects/rotation_2019/stats')
@@ -59,22 +60,14 @@ for (i in c(2:10)){
 	cancer_surv_df_i$group <- t.group_cancer$group
 	cancer_surv_df_i <- cancer_surv_df_i[,c('days', 'status', 'group')]
 
-	#surv_object <- Surv(time = cancer_surv_df$days,
-	#					event = cancer_surv_df$status,
-	#					type = 'right')
-	#fit1 <- survfit(surv_object ~ group, data=t.group_cancer)
-	#print(summary(fit1))
-
 	surv_object <- Surv(time = cancer_surv_df_i$days,
 		event=cancer_surv_df_i$status)
-	#fit1 <- survfit(Surv(days, status) ~ group, data = cancer_surv_df)
 	fit1 <- survfit(surv_object ~ group, data=cancer_surv_df_i)
 
 	stats_dir <- '/home/grahman/projects/rotation_2019/stats'
 	out_dir <- paste(stats_dir, 'survival_plots', cancer_type, sep='/')
 	dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
 	out_file <- paste(out_dir, sprintf('%s_clusters.png', i), sep='/')
-	#png('bruh.png')
 	survp <- ggsurvplot(fit1, pval = TRUE)
 	ggsave(file=out_file, print(survp), width=4, height=4, units="in")
 }
