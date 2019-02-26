@@ -12,6 +12,7 @@ if (length(args) == 0){
 
 group_file <- args[1]
 cib_file <- args[2]
+out_file <- args[3]
 
 print('Loading data frames...')
 #otu_df <- read.csv('../data/snmData_Cib_filt.csv')
@@ -43,5 +44,7 @@ for (cell_type in colnames(cib_group_df)){
 	print(summary(aov))
 	test = summary(aov)
 	print(test[[1]]$"Pr(>F)")
+	tk <- TukeyHSD(aov)
+	print(tk)
 }
 
