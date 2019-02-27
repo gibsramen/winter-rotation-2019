@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#PBS -V
+#PBS -N comp_alpha_div
+#PBS -m abe
+#PBS -M grahman@eng.ucsd.edu
+#PBS -l pmem=4gb
+#PBS -l walltime=12:00:00
+#PBS -l nodes=1:ppn=10
+#PBS -j oe
+#PBS -o out/
+
+source '/opt/miniconda3/bin/activate' 'qiime2-2019.1'
+
+panfs='/panfs/panfs1.ucsd.edu/panscratch/grahman'
+
+transpose_script='/home/grahman/projects/rotation_2019/scripts/transpose_group.py'
+tmp_tsv="${panfs}/comp_alpha_tmp.tsv"
+# transpose group_file
+python $transpose_script $GROUP_FILE $tmp_tsv
+echo "Group file transposed!"
+
+otu_table='/home/grahman/data/TCGA_immune_microbiome/qiime/otu_table.qza'
+filter_table="${panfs}/filtered_by_group_table.qza"
+qiime feature-table filter-samples --i-table $otu_table --m-metadata-file $tmp_tsv --o-filtered-table $filter_table
+echo "Filtered otu_table!"
+
+filtered_alpha='/home/grahman/data/TCGA_immune_microbiome/qiime/filtered_by_group_otu_alpha_div.qza'
+qiime diversity alpha --i-table $filter_table --p-metric shannon --o-alpha-diversity $filtered_alpha
+echo "Alpha diversity calculated!"
+
+out_viz="/home/grahman/projects/rotation_2019/qiime/alpha_viz.qzv"
+qiime diversity alpha-group-significance --i-alpha-diversity $filtered_alpha --m-metadata-file $tmp_tsv --o-visualization $out_viz
+echo "Diversity comparison done!"

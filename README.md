@@ -43,6 +43,14 @@ Usage:
 
 `qsub survival_analysis.pbs`
 
+### Alpha Diversity Comparison
+
+Compare alpha diversity among patients in each identified cluster.
+
+Usage:
+
+`qsub -v GROUP_FILE=<path to group file> compare_alpha_diversity.pbs`
+
 ### PERMANOVA
 
 Perform PERMANOVA on cluster results to analyze differential abundances among clusters.
