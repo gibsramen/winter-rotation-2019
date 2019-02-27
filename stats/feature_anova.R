@@ -6,7 +6,7 @@ library(reshape2)
 # probably only return significant values
 
 args <- commandArgs(trailingOnly=TRUE)
-if (length(args) == 0){
+if (length(args) < 3){
 	stop('Please provide arguments!')
 }
 
@@ -35,16 +35,24 @@ cib_group_df$feature.id <- NULL
 cib_group_df$CancerType <- NULL
 melt.cib_group_df <- melt(cib_group_df, id.vars = c('group'))
 
+p.vals <- c()
 for (cell_type in colnames(cib_group_df)){
 	if (cell_type == 'group'){ next }
 	print(cell_type)
 	cell.cib_group_df <- cib_group_df[,c('group', cell_type)]
 	colnames(cell.cib_group_df) <- c('group', 'value')
 	aov <- aov(value ~ group, data = cell.cib_group_df)
-	print(summary(aov))
-	test = summary(aov)
-	print(test[[1]]$"Pr(>F)")
+	summ <- summary(aov)
+	p.val <- summ[[1]]$"Pr(>F)"[1]
+	p.vals <- c(p.vals, p.val)
 	tk <- TukeyHSD(aov)
-	print(tk)
 }
 
+adj.p.vals <- p.adjust(p.vals, method="fdr")
+
+#out.df <- rbind(colnames(cib_group_df), adj.p.vals)
+cell_types <- colnames(cib_group_df)[!colnames(cib_group_df) %in% c('group')]
+out.df <- data.frame(cbind(cell_types, p.vals, adj.p.vals))
+colnames(out.df) <- c('Cell.Type', 'p-vals', 'BH-adj-p-vals')
+
+write.csv(out.df, file = out_file, row.names=F)
