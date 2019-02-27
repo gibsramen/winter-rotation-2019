@@ -50,3 +50,13 @@ Perform PERMANOVA on cluster results to analyze differential abundances among cl
 Usage:
 
 `qsub -v GROUP_FILE=<group file> permanova.pbs`
+
+### Feature ANOVA
+
+Perform ANOVA on all features and association with identified group. Right now only supports CIBERSORT features.
+
+TODO: Implement OTU as well.
+
+Usage:
+
+`Rscript feature_anova.R <path to group file> <path to CIBERSORT file> <path to output file>`
