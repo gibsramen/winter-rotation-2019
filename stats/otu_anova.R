@@ -10,6 +10,7 @@ if (length(args) < 2){
 	stop('Please provide arguments!')
 }
 
+setwd('/home/grahman/projects/rotation_2019/stats')
 cluster_dir <- args[1]
 cancer_types <- list.files(cluster_dir, full.names = F)
 feature_csv <- args[2]
@@ -25,6 +26,7 @@ for (cancer in cancer_types){
 		print(clust_string)
 		num_clust_dir <- paste(cancer_dir, clust_string, sep='/')
 		group_file_loc <- paste(num_clust_dir, 'group.csv', sep='/')
+		print(group_file_loc)
 		group_df <- read.csv(group_file_loc, header=F)
 
 		t.group_df <- t(group_df)
@@ -53,11 +55,11 @@ for (cancer in cancer_types){
 			tk <- TukeyHSD(aov)
 		}
 
-		adj.p.vals <- p.adjust(p.vals, method = "bonferroni")
+		adj.p.vals <- p.adjust(p.vals, method = "fdr")
 
 		all.otus <- colnames(otu_group_df)[!colnames(otu_group_df) %in% c('group')]
 		out.df <- data.frame(cbind(all.otus, p.vals, adj.p.vals))
-		colnames(out.df) <- c('OTU', 'p-vals', 'Bonf-adj-p-vals')
+		colnames(out.df) <- c('OTU', 'p-vals', 'FDR-adj-p-vals')
 
 		out_file <- paste(num_clust_dir, 'otu_anova.csv', sep='/')
 		write.csv(out.df, file = out_file, row.names=F)

@@ -10,6 +10,7 @@ if (length(args) < 2){
 	stop('Please provide arguments!')
 }
 
+setwd('/home/grahman/projects/rotation_2019/stats')
 cluster_dir <- args[1]
 cancer_types <- list.files(cluster_dir, full.names = F)
 cib_file <- args[2]
@@ -35,8 +36,8 @@ for (cancer in cancer_types){
 		t.group_df <- t.group_df[order(t.group_df$id),]
 
 		print('Filtering data frames...')
-		cib_df <- cib_df[cib_df$feature.id %in% t.group_df$id,]
-		cib_group_df <- data.frame(cib_df)
+		cib_df_filt <- cib_df[cib_df$feature.id %in% t.group_df$id,]
+		cib_group_df <- data.frame(cib_df_filt)
 		cib_group_df <- cib_group_df[order(cib_group_df$feature.id),]
 		cib_group_df$group <- t.group_df$group
 		cib_group_df$feature.id <- NULL
@@ -55,11 +56,11 @@ for (cancer in cancer_types){
 			tk <- TukeyHSD(aov)
 		}
 
-		adj.p.vals <- p.adjust(p.vals, method="bonferroni")
+		adj.p.vals <- p.adjust(p.vals, method="fdr")
 
 		cell_types <- colnames(cib_group_df)[!colnames(cib_group_df) %in% c('group')]
 		out.df <- data.frame(cbind(cell_types, p.vals, adj.p.vals))
-		colnames(out.df) <- c('Cell.Type', 'p-vals', 'Bonf-adj-p-vals')
+		colnames(out.df) <- c('Cell.Type', 'p-vals', 'FDR-adj-p-vals')
 
 		out_file <- paste(num_clust_dir, 'cib_anova.csv', sep='/')
 		write.csv(out.df, file = out_file, row.names=F)

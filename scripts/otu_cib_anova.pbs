@@ -15,5 +15,5 @@ source /opt/miniconda3/bin/activate CancerSubtypes
 cib_script='/home/grahman/projects/rotation_2019/stats/cib_anova.R'
 otu_script='/home/grahman/projects/rotation_2019/stats/otu_anova.R'
 
-Rscript $cib_script $CLUST_DIR $OTU_FILE
-Rscript $otu_script $CLUST_DIR $CIB_FILE
+Rscript $cib_script $CLUST_DIR $CIB_FILE
+Rscript $otu_script $CLUST_DIR $OTU_FILE
