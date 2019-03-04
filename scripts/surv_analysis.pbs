@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #PBS -V
-#PBS -t 1-25
 #PBS -N surv_analysis
 #PBS -m abe
 #PBS -M grahman@eng.ucsd.edu
@@ -13,6 +12,6 @@
 
 source /opt/miniconda3/bin/activate CancerSubtypes
 script='/home/grahman/projects/rotation_2019/stats/survival_analysis.R'
-cancers='/home/grahman/projects/rotation_2019/data/cancer_counts.txt'
 
-Rscript $script `sed -n "${PBS_ARRAYID}p" $cancers`
+#Rscript $script `sed -n "${PBS_ARRAYID}p" $cancers`
+Rscript $script $CLUSTER_DIR
