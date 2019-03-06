@@ -29,7 +29,7 @@ qiime diversity filter-distance-matrix --i-distance-matrix $bray_curtis_dist --m
 echo "Diversity matrix filtered!"
 
 # run permanova
-out_viz="/home/grahman/projects/rotation_2019/qiime/out_viz.qzv"
-
+#out_viz="/home/grahman/projects/rotation_2019/qiime/out_viz.qzv"
+out_viz=$OUT_FILE
 qiime diversity beta-group-significance --i-distance-matrix $tmp_dist_matrix --m-metadata-file $tmp_tsv --m-metadata-column group --o-visualization $out_viz --p-pairwise
 echo "Permanova performed!"

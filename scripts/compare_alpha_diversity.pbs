@@ -29,6 +29,7 @@ filtered_alpha='/home/grahman/data/TCGA_immune_microbiome/qiime/filtered_by_grou
 qiime diversity alpha --i-table $filter_table --p-metric shannon --o-alpha-diversity $filtered_alpha
 echo "Alpha diversity calculated!"
 
-out_viz="/home/grahman/projects/rotation_2019/qiime/alpha_viz.qzv"
+#out_viz="/home/grahman/projects/rotation_2019/qiime/alpha_viz.qzv"
+out_viz=$OUT_FILE
 qiime diversity alpha-group-significance --i-alpha-diversity $filtered_alpha --m-metadata-file $tmp_tsv --o-visualization $out_viz
 echo "Diversity comparison done!"
