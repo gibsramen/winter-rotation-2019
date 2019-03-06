@@ -56,7 +56,6 @@ if __name__ == '__main__':
             barcode = re.search('TCGA-.{2}-.{4}', line).group()
             uuid = re.match('[0-9a-z\-]*', line).group()
             follow_up_days = extract_days(uuid)
-            print(follow_up_days)
             day_dict[barcode] = follow_up_days
 
     with open('follow_up_counts.txt', 'w+') as f:
