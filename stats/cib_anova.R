@@ -60,6 +60,7 @@ for (cancer in cancer_types){
 
 		cell_types <- colnames(cib_group_df)[!colnames(cib_group_df) %in% c('group')]
 		out.df <- data.frame(cbind(cell_types, p.vals, adj.p.vals))
+		out.df <- out.df[order(out.df$'p-vals'),]
 		colnames(out.df) <- c('Cell.Type', 'p-vals', 'FDR-adj-p-vals')
 
 		out_file <- paste(num_clust_dir, 'cib_anova.csv', sep='/')

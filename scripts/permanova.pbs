@@ -5,8 +5,8 @@
 #PBS -m abe
 #PBS -M grahman@eng.ucsd.edu
 #PBS -l pmem=8gb
-#PBS -l walltime=48:00:00
-#PBS -l nodes=2:ppn=10
+#PBS -l walltime=24:00:00
+#PBS -l nodes=1:ppn=10
 #PBS -j oe
 #PBS -o out/
 

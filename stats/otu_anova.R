@@ -60,6 +60,7 @@ for (cancer in cancer_types){
 		all.otus <- colnames(otu_group_df)[!colnames(otu_group_df) %in% c('group')]
 		out.df <- data.frame(cbind(all.otus, p.vals, adj.p.vals))
 		colnames(out.df) <- c('OTU', 'p-vals', 'FDR-adj-p-vals')
+		out.df <- out.df[order(out.df$'p-vals'),]
 
 		out_file <- paste(num_clust_dir, 'otu_anova.csv', sep='/')
 		write.csv(out.df, file = out_file, row.names=F)
