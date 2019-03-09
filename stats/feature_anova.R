@@ -17,7 +17,6 @@ out_file <- args[3]
 print('Loading data frames...')
 #otu_df <- read.csv('../data/snmData_Cib_filt.csv')
 cib_df <- read.csv(cib_file)
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
 group_df <- read.csv(group_file, header=F)
 
 t.group_df <- t(group_df)

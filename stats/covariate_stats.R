@@ -8,7 +8,7 @@ if (length(args) == 0){
 # run on cluster directory
 cluster_dir <- args[1]
 cancer_types <- list.files(cluster_dir, full.names = F)
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
+meta_df <- read.csv('../data/metadata_sid_filt_uniq.csv')
 meta_df <- meta_df[,c('X', 'race', 'age_at_diagnosis', 'gender')]
 
 for (cancer in cancer_types){

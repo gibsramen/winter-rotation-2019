@@ -16,7 +16,7 @@ days_df <- read.table('../clinical/follow_up_counts.txt', sep='\t')
 colnames(days_df) <- c('barcode', 'status', 'days')
 days_df$status <- as.character(days_df$status)
 
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
+meta_df <- read.csv('../data/metadata_sid_filt_uniq.csv')
 surv_df <- meta_df[,c('X', 'investigation' ,'vital_status_label', 
 	'days_to_death', 'new_tumor_event_after_initial_trtmt',
 	'primary_therapy_outcome_success_label', 'case_id')]

@@ -18,7 +18,8 @@ print('Loading data frames...')
 
 cib_df <- read.csv(cib_file)
 otu_df <- read.csv('../data/snmData_Cib_filt.csv')
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
+#meta_df <- read.csv('../data/metadata_sid_filt.csv')
+meta_df <- read.csv('../data/metadata_sid_filt_uniq.csv')
 days_df <- read.table('../clinical/follow_up_counts.txt', sep='\t')
 colnames(days_df) <- c('barcode', 'status', 'days')
 days_df$status <- as.character(days_df$status)
@@ -27,6 +28,7 @@ print('Data frames loaded!')
 # ---- FILTERING ----
 
 cancer_cib_df <- cib_df[cib_df$CancerType == cancer_type,]
+cancer_cib_df <- cancer_cib_df[cancer_cib_df$feature.id %in% meta_df$X,]
 if (dim(cancer_cib_df)[1] < 100){
 	stop('Cancer has fewer than 100 samples!')
 }

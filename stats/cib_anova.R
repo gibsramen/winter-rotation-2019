@@ -17,7 +17,6 @@ cib_file <- args[2]
 
 print('Loading data frames...')
 cib_df <- read.csv(cib_file)
-meta_df <- read.csv('../data/metadata_sid_filt.csv')
 
 for (cancer in cancer_types){
 	print(cancer)
